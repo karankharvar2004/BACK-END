@@ -1,5 +1,3 @@
-# RentTrack - Book Rental System (Module 14)
-
 from datetime import datetime
 
 rentals = []

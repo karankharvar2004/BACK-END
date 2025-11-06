@@ -1,6 +1,3 @@
-# RentTrack - Basic Book Rental System (Module 13)
-
-# Function to rent a book
 def rent_book():
     print("\n--- Book Rental ---")
     customer = input("Enter customer name: ")
@@ -15,7 +12,6 @@ def rent_book():
     print("Return Date:", return_date)
 
 
-# Function to return a book
 def return_book():
     print("\n--- Book Return ---")
     customer = input("Enter customer name: ")
@@ -38,7 +34,6 @@ def return_book():
     print("Returned Successfully!")
 
 
-# Main program loop
 while True:
     print("\n==== RentTrack Library System ====")
     print("1. Rent a Book")

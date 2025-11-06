@@ -1,0 +1,89 @@
+{% extends 'header.html' %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyProjectSite</title>
+  </head>
+
+  <body>
+    {% if msg %}
+    <b style="color: blue;">{{msg}}</b>
+    {% endif %}
+    <form
+      name="contact"
+      method="post"
+      action="{% url 'contact' %}"
+      class="p-4 rounded shadow-lg"
+      style="
+        max-width: 500px;
+        margin: 50px auto;
+        background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      "
+    >
+      {% csrf_token %}
+      <h3 class="text-center mb-4 text-primary" style="font-weight: bold">
+        Contact Us
+      </h3>
+      <div class="mb-3">
+        <label class="form-label">Name:</label>
+        <input
+          type="text"
+          name="name"
+          class="form-control"
+          required
+          style="border-radius: 10px"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email:</label>
+        <input
+          type="email"
+          name="email"
+          class="form-control"
+          required
+          style="border-radius: 10px"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Mobile:</label>
+        <input
+          type="tel"
+          name="mobile"
+          class="form-control"
+          required
+          style="border-radius: 10px"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Remarks:</label>
+        <textarea
+          rows="4"
+          name="remarks"
+          class="form-control"
+          required
+          style="border-radius: 10px"
+        ></textarea>
+      </div>
+      <div class="text-center">
+        <input
+          type="submit"
+          value="Submit"
+          class="btn btn-primary px-4 py-2"
+          style="border-radius: 20px; background-color: #007bff; border: none"
+        />
+      </div>
+    </form>
+    
+    <hr />
+    <h1>Recent Contacts</h1>
+    <hr />
+    {% for i in contacts %} Name : {{i.name}}<br />
+    Remarks : {{i.remarks}}<br />
+    <hr />
+
+    {% endfor %}
+  </body>
+</html>
+{% endblock %}
