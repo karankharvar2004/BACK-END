@@ -115,18 +115,30 @@
           </ul>
 
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            {% if request.session.email %}
+            <li class="nav-item">
+              <a class="nav-link auth-link" href="{% url 'profile' %}">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link auth-link" href="{% url 'change-password' %}">Change Password</a>
+            </li> 
+            <li class="nav-item">
+              <a class="nav-link auth-link" href="{% url 'logout' %}">Logout({{request.session.fname}})</a>
+            </li>
+            {% else %}
             <li class="nav-item">
               <a class="nav-link auth-link" href="{% url 'signup' %}">SignUp</a>
             </li>
             <li class="nav-item">
               <a class="nav-link auth-link" href="{% url 'login' %}">Login</a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </div>
     </nav>
 
-    {% block content %}
+    {% block content %} 
     {% endblock %}
   </body>
 </html>
