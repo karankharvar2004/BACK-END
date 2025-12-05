@@ -1,0 +1,61 @@
+{% extends 'header.html' %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyProjectSite</title>
+
+    <style>
+      .btn-hover {
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .btn-hover:hover {
+        background-color: #0056b3;
+        transform: scale(1.15);
+      }
+    </style>
+  </head>
+
+  <body>
+    {% if msg %}
+    <b style="color: blue">{{msg}}</b>
+    {% endif %}
+    <form
+      name="forgot-password"
+      method="post"
+      action="{% url 'verify-otp' %}"
+      class="p-4 rounded shadow-lg"
+      style="
+        max-width: 500px;
+        margin: 50px auto;
+        background: linear-gradient(135deg, #b3e9f0ff, #f5ababff);
+      "
+    >
+      {% csrf_token %}
+      <h3 class="text-center mb-4 text-primary" style="font-weight: bold">
+        Enter Your OTP
+      </h3>
+      <div class="mb-3">
+        <label class="form-label">OTP:</label>
+        <input
+          type="email"
+          name="otp"
+          class="form-control"
+          required
+          style="border-radius: 10px"
+        />
+      </div>
+      <div class="text-center">
+        <input
+          type="Submit"
+          value="verify OTP"
+          class="btn btn-primary px-4 py-2 btn-hover"
+          style="border-radius: 20px; background-color: #007bff; border: none"
+        />
+      </div>
+    </form>
+  </body>
+</html>
+{% endblock %}
