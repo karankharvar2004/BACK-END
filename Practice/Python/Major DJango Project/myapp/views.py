@@ -1,18 +1,42 @@
-from django.shortcuts import render
-from .models import User
+from django.shortcuts import render, redirect
+from .models import User, Product, Wishlist
 from django.core.mail import send_mail
 from django.conf import settings
 import random
 
 # Create your views here.
 def index(request):
-    return render(request,'index.html')
+    try:
+        user=User.objects.get(email=request.session['email'])
+        if user.usertype=="buyer":
+            return render(request,'index.html')
+        else:
+            return render(request,'seller-index.html')
+    except:
+        return render(request,'index.html')
 
 def contact(request):
     return render(request,'contact.html')
 
 def category(request):
-    return render(request,'category.html')
+    products=Product.objects.all()
+    return render(request,'category.html',{'products':products})
+
+def men(request):
+    products=Product.objects.filter(product_category="Men")
+    return render(request,'category.html',{'products':products})
+
+def women(request):
+    products=Product.objects.filter(product_category="Women")
+    return render(request,'category.html',{'products':products})
+
+def kids(request):
+    products=Product.objects.filter(product_category="Kids")
+    return render(request,'category.html',{'products':products})
+
+def accessories(request):
+    products=Product.objects.filter(product_category="Accessories")
+    return render(request,'category.html',{'products':products})
 
 def login(request):
     if request.method=="POST":
@@ -22,7 +46,10 @@ def login(request):
                request.session['email']=user.email
                request.session['fname']=user.fname
                request.session['profile_picture']=user.profile_picture.url
-               return render(request,'index.html')
+               if user.usertype=="buyer":
+                    return render(request,'index.html')
+               else:
+                    return render(request,'seller-index.html')
            else:
                msg="Incorrect Password"
                return render(request,'login.html',{'msg':msg})
@@ -50,7 +77,8 @@ def signup(request):
                     mobile=request.POST['mobile'],
                     address=request.POST['address'],
                     password=request.POST['password'],
-                    profile_picture=request.FILES['profile_picture']
+                    profile_picture=request.FILES['profile_picture'],
+                    usertype=request.POST['usertype'],
                 )
                 msg="User SignUp Successfully"
                 return render(request,'login.html',{'msg':msg})
@@ -85,13 +113,20 @@ def profile(request):
         user.save()
         request.session['profile_picture']=user.profile_picture.url
         msg="Profile Updated Successfully"
-        return render(request,'profile.html',{'user':user, 'msg':msg})
+        if user.usertype=="buyer":
+            return render(request,'profile.html',{'user':user, 'msg':msg})
+        else:
+            return render(request,'seller-profile.html',{'user':user, 'msg':msg})
+           
     else:
-        return render(request,'profile.html',{'user':user})
+        if user.usertype=="buyer":
+            return render(request,'profile.html',{'user':user})
+        else:
+            return render(request,'seller-profile.html',{'user':user})  
     
 def change_password(request):
+    user=User.objects.get(email=request.session['email'])
     if request.method=="POST":
-        user=User.objects.get(email=request.session['email'])
         if user.password==request.POST['old_password']:
             if request.POST['new_password']==request.POST['cnew_password']:
                 if user.password!=request.POST['new_password']:
@@ -104,16 +139,29 @@ def change_password(request):
                     return render(request,'login.html',{'msg':msg})
                 else:
                     msg="Your New Password Can't be Your Old Password"
-                    return render(request,'change-password.html',{'msg':msg})
+                    if user.usertype=="buyer":
+                        return render(request,'change-password.html',{'msg':msg})
+                    else:
+                        return render(request,'seller-change-password.html',{'msg':msg})                   
             else:
                 msg="New Password and Confirm New Passsword Does Not Matched"
-                return render(request,'change-password.html',{'msg':msg})
+                if user.usertype=="buyer":
+                    return render(request,'change-password.html',{'msg':msg})
+                else:
+                    return render(request,'seller-change-password.html',{'msg':msg})                   
         else:
             msg="Old Password Does Not Matched"
-            return render(request,'change-password.html',{'msg':msg})
+            if user.usertype=="buyer":
+                return render(request,'change-password.html',{'msg':msg})
+            else:
+                return render(request,'seller-change-password.html',{'msg':msg})                   
  
     else:
-        return render(request,'change-password.html')
+        if user.usertype=="buyer":
+            return render(request,'change-password.html')
+        else:
+            return render(request,'seller-change-password.html')
+           
     
 def forgot_password(request):
     if request.method=="POST":
@@ -122,44 +170,105 @@ def forgot_password(request):
             otp=random.randint(1000,9999)
             context = {}
             address = request.POST['email']
-            subject = "OTP For Forgot Password"
-            message = "Your OTP For Forgot Password Is "+str(otp)
-
+            subject = 'OTP for Forgot Password'
+            message = 'Hello, Your OTP for Forgot password is '+str(otp)
+            
             if address and subject and message:
                 try:
                     send_mail(subject, message, settings.EMAIL_HOST_USER, [address])
                     context['result'] = 'Email sent successfully'
                     request.session['email1']=request.POST['email']
-                    request.session['otp']=otp
-                    
+                    request.session['otp']=otp                
                 except Exception as e:
                     context['result'] = f'Error sending email: {e}'
             else:
                 context['result'] = 'All fields are required'
-                
+    
             return render(request, "otp.html", context)
-        except:
-            msg="Email Not Registered"
-        return render(request,'forgot-password.html',{'msg':msg})           
+        except Exception as e:
+            print(e)
+            msg="Email Not Registered" 
+            return render(request,'forgot-password.html',{'msg':msg})
     else:
         return render(request,'forgot-password.html')
     
 def verify_otp(request):
-    if int(request.session['otp'])==int(request.POST['otp']):
+    if 'otp' in request.session and str(request.session['otp']) == request.POST['otp']:
         del request.session['otp']
-        return render(request,'new-password.html')
+        return render(request, 'new-password.html')
     else:
-        msg="Invalid OTP"
-        return render(request,"otp.html",{'msg':msg})
+        msg = "Invalid OTP"
+        return render(request, "otp.html", {'msg': msg})
     
 def new_password(request):
     if request.POST['new_password']==request.POST['cnew_password']:
         user=User.objects.get(email=request.session['email1'])
         user.password=request.POST['new_password']
         user.save()
-        msg="Password Updated Successfully"
-        del request.session['email']
+        msg="password updated sucessfully"
+        del request.session['email1']
         return render(request,'login.html',{'msg':msg})
     else:
-        msg="New Password and Confirm New Password does not Matched"
+        msg="New Password & confirm new password does not matched"
         return render(request,'new-password.html',{'msg':msg})
+    
+def add_product(request):
+    seller=User.objects.get(email=request.session['email'])
+    if request.method=="POST":
+        Product.objects.create(
+            seller=seller,
+            product_category=request.POST['product_category'],
+            product_name=request.POST['product_name'],
+            product_price=request.POST['product_price'],
+            product_desc=request.POST['product_desc'],
+            product_image=request.FILES['product_image'],
+        )
+        msg="Product Added Successfully"
+        return render(request, 'add-product.html',{'msg':msg})
+    else:
+        return render(request, 'add-product.html')
+    
+def view_product(request):
+    seller=User.objects.get(email=request.session['email'])
+    products=Product.objects.filter(seller=seller)
+    return render(request,'view-product.html',{'products':products})
+
+def seller_product_details(request,pk):
+    product=Product.objects.get(pk=pk)
+    return render(request,'seller-product-details.html',{'product':product})
+
+def product_details(request,pk):
+    product=Product.objects.get(pk=pk)
+    return render(request,'product-details.html',{'product':product})
+
+def seller_product_edit(request,pk):
+    product=Product.objects.get(pk=pk)
+    if request.method=="POST":
+        product.product_category=request.POST['product_category']
+        product.product_name=request.POST['product_name']
+        product.product_price=request.POST['product_price']
+        product.product_desc=request.POST['product_desc']
+        try:
+            product.product_image=request.FILES['product_image']
+        except:
+            pass
+        product.save()
+        return redirect('view-product')
+    else:
+        return render(request,'seller-product-edit.html',{'product':product})
+    
+def seller_product_delete(request,pk):
+    product=Product.objects.get(pk=pk)
+    product.delete()
+    return redirect('view-product')
+
+def add_to_wishlist(request,pk):
+    product=Product.objects.get(pk=pk)
+    user=User.objects.get(email=request.session['email'])
+    Wishlist.objects.create(user=user,product=product)
+    return redirect('wishlist')
+
+def wishlist(request):
+    user=User.objects.get(email=request.session['email'])
+    wishlists=Wishlist.objects.filter(user=user)
+    return render(request,'wishlist.html',{'wishlists':wishlists})

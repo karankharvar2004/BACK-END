@@ -13,5 +13,17 @@ urlpatterns = [
     path('forgot-password/',views.forgot_password,name='forgot-password'),
     path('verify-otp/',views.verify_otp,name='verify-otp'),
     path('new-password/',views.new_password,name='new-password'),
+    path('add-product/',views.add_product,name='add-product'),
+    path('view-product/',views.view_product,name='view-product'),
+    path('seller-product-details/<int:pk>/',views.seller_product_details,name='seller-product-details'),
+    path('seller-product-edit/<int:pk>/',views.seller_product_edit,name='seller-product-edit'),
+    path('seller-product-delete/<int:pk>/',views.seller_product_delete,name='seller-product-delete'),
+    path('men/',views.men,name='men'),
+    path('women/',views.women,name='women'),
+    path('kids/',views.kids,name='kids'),
+    path('accessories/',views.accessories,name='accessories'),
+    path('product-details/<int:pk>/',views.product_details,name='product-details'),
+    path('add-to-wishlist/<int:pk>/',views.add_to_wishlist,name='add-to-wishlist'),
+    path('wishlist/',views.wishlist,name='wishlist'),
 
 ]

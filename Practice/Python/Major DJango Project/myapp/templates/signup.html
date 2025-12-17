@@ -43,6 +43,15 @@
           <form class="form-contact contact_form" action="{% url 'signup' %}" method="post" id="contactForm" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
+              <div class="col-sm-12" style="margin-bottom: 28px;">
+                <div class="form-group">
+                  <select class="form-control" name="usertype" id="usertype">
+                    <option>---Select User Type</option>
+                    <option value="buyer">Buyer</option>
+                    <option value="seller">Seller</option>
+                  </select>
+                </div>
+              </div>
               <div class="col-sm-6">
                 <div class="form-group">
                   <input class="form-control" name="fname" id="name" type="text" placeholder="Enter Your First Name">
