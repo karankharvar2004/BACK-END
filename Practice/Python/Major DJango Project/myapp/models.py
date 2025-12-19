@@ -37,5 +37,17 @@ class Wishlist(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
     time=models.DateTimeField(default=timezone.now)
     
+    def __str__(self):
+        return self.user.fname+" - "+self.product.product_name
+
+class Cart(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    time=models.DateTimeField(default=timezone.now)
+    product_price=models.PositiveBigIntegerField()
+    product_qty=models.PositiveIntegerField()
+    total_price=models.PositiveIntegerField()
+    payment_status=models.BooleanField(default=False)
+    
 def __str__(self):
-    return self.user.fname+" - "+self.product_name
+    return self.user.fname+" - "+self.product.product_name
