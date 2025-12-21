@@ -3,6 +3,14 @@ from .models import User, Product, Wishlist, Cart
 from django.core.mail import send_mail
 from django.conf import settings
 import random
+import requests
+from django.http import JsonResponse,HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+import stripe
+
+stripe.api_key = settings.STRIPE_PRIVATE_KEY
+YOUR_DOMAIN = 'http://localhost:8000'
 
 # Create your views here.
 def index(request):
@@ -312,14 +320,76 @@ def add_to_cart(request,pk):
     return redirect('cart')
 
 def cart(request):
+    net_price=0
     user=User.objects.get(email=request.session['email'])
     carts=Cart.objects.filter(user=user,payment_status=False)
-    request.session['wishlist_count']=len(carts)
-    return render(request,'cart.html',{'carts':carts})
+    for i in carts:
+        net_price=net_price+i.total_price
+    request.session['cart_count']=len(carts)
+    return render(request,'cart.html',{'carts':carts,'net_price':net_price})
 
 def remove_from_cart(request,pk):
     product=Product.objects.get(pk=pk)
     user=User.objects.get(email=request.session['email'])
-    cart=Cart.objects.get(user=user,product=product)
+    cart=Cart.objects.get(user=user,product=product,payment_status=False)
     cart.delete()
     return redirect('cart')
+
+def change_qty(request):
+    cart=Cart.objects.get(pk=int(request.POST['cid']))
+    product_qty=int(request.POST['product_qty'])
+    cart.total_price=cart.product_price*product_qty
+    cart.product_qty=product_qty
+    cart.save()
+    return redirect('cart')
+
+@csrf_exempt
+def create_checkout_session(request):
+	amount = int(json.load(request)['post_data'])
+	final_amount=amount*100
+	user=User.objects.get(email=request.session['email'])
+	user_name=f"{user.fname} {user.lname}"
+	user_address=f"{user.address}"
+	user_mobile=f"{user.mobile}"
+	session = stripe.checkout.Session.create(
+		payment_method_types=['card'],
+		line_items=[{
+			'price_data': {
+				'currency': 'inr',
+				'unit_amount': final_amount,
+				'product_data': {
+					'name': 'Checkout Session Data',
+					'description':f'''Customer:{user_name},\n\n
+					Address:{user_address},\n
+					Mobile:{user_mobile}''',
+				},
+			},
+			'quantity': 1,
+			}],
+		mode='payment',
+		success_url=YOUR_DOMAIN + '/success.html',
+		cancel_url=YOUR_DOMAIN + '/cancel.html',
+		customer_email=user.email,
+		shipping_address_collection={
+			'allowed_countries':['IN'],
+		}
+		)
+	return JsonResponse({'id': session.id})
+
+def success(request):
+	user=User.objects.get(email=request.session['email'])
+	carts=Cart.objects.filter(user=user,payment_status=False)
+	for i in carts:
+		i.payment_status=True
+		i.save()
+	carts=Cart.objects.filter(user=user,payment_status=False)
+	request.session['cart_count']=len(carts)
+	return render(request,'success.html')
+
+def cancel(request):
+	return render(request,'cancel.html')
+
+def myorder(request):
+    user=User.objects.get(email=request.session['email'])
+    carts=Cart.objects.filter(user=user,payment_status=True)
+    return render(request,'myorder.html',{'carts':carts})

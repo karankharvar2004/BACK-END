@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+        <script src="https://js.stripe.com/v3/"></script>
   </head>
 
   <body>
@@ -64,29 +65,11 @@
                   </td>
                   <td>
                     <div class="product_count">
-                      <input
-                        type="text"
-                        name="qty"
-                        id="sst"
-                        maxlength="12"
-                        value="1"
-                        title="Quantity:"
-                        class="input-text qty"
-                      />
-                      <button
-                        onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                        class="increase items-count"
-                        type="button"
-                      >
-                        <i class="lnr lnr-chevron-up"></i>
-                      </button>
-                      <button
-                        onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                        class="reduced items-count"
-                        type="button"
-                      >
-                        <i class="lnr lnr-chevron-down"></i>
-                      </button>
+                      <form name="change_qty" method="post" action="{% url 'change-qty' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="cid" value="{{i.pk}}">
+                        <input type="number" name="product_qty" value="{{i.product_qty}}" min="1" max="10" onchange="this.form.submit();">
+                      </form>
                     </div>
                   </td>
                   <td>
@@ -101,7 +84,7 @@
                     <h5>Subtotal</h5>
                   </td>
                   <td>
-                    <h5>$2160.00</h5>
+                    <h5>{{net_price}} Rs</h5>
                   </td>
                 </tr>
                 <tr class="out_button_area">
@@ -110,8 +93,11 @@
                   <td></td>
                   <td>
                     <div class="checkout_btn_inner">
-                      <a class="gray_btn" href="#">Continue Shopping</a>
-                      <a class="main_btn" href="#">Proceed to checkout</a>
+                      <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" id="net_price" name="amount" value="{{net_price}}">
+                            <button class="main_btn" type="button" id="checkout-button">Proceed Checkout</button>
+                        </form>
                     </div>
                   </td>
                 </tr>
@@ -122,6 +108,40 @@
       </div>
     </section>
     <!--================End Cart Area =================-->
+<script type="text/javascript">
+
+var stripe = Stripe('pk_test_51MshH6SJuXwPfjjrrgxJ5tubbOgYAhRrqNcd4RDUSq1peWpIMZrjhIiTncSUWO9u6byeDf4KxdZPkFD4hU55mVOg00aRL5RT8x');
+var checkoutButton = document.getElementById('checkout-button');
+
+checkoutButton.addEventListener('click', function() { 
+ fetch('/create-checkout-session/', {
+ method: 'POST',
+    headers:{
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest', //Necessary to work with request.is_ajax()
+
+    },
+    body: JSON.stringify({'post_data':'{{net_price}}'})
+ })
+ .then(function(response) {
+ return response.json();
+ })
+ .then(function(session) {
+ return stripe.redirectToCheckout({ sessionId: session.id });
+ })
+ .then(function(result) {
+ // If `redirectToCheckout` fails due to a browser or network
+ // error, you should display the localized error message to your
+ // customer using `error.message`.
+ if (result.error) {
+ alert(result.error.message);
+ }
+ })
+ .catch(function(error) {
+ console.error('Error:', error);
+ });
+ });
+ </script>
   </body>
 </html>
 {% endblock %}
