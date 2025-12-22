@@ -28,18 +28,31 @@
 	<!-- end search arewa -->
 	
 	<!-- breadcrumb-section -->
-	<div class="breadcrumb-section breadcrumb-bg">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2 text-center">
-					<div class="breadcrumb-text">
-						<p>Create Your New Account</p>
-						<h1>SignUp</h1>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+	<div class="breadcrumb-section breadcrumb-bg"
+     style="font-family: 'Poppins', sans-serif;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <p style="
+                        font-family: cursive;
+                        font-style: italic;
+                    ">
+                        Create Your New Account
+                    </p>
+                    <h1 style="
+                        font-family: 'Dancing Script', cursive;
+                        font-weight: 700;
+                        letter-spacing: 1px;
+                    ">
+                        SignUp
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
 	<!-- end breadcrumb section -->
 
 	<!-- contact form -->
@@ -47,9 +60,27 @@
                 background-image: url('https://images.pexels.com/photos/5677799/pexels-photo-5677799.jpeg');
                 background-size: cover;
                 background-position: center;
-                height: 100%;
-            ">>
+                background-repeat: no-repeat;
+                height: 850px;
+
+            ">
 			<div class="contact-form">
+                {% if msg %}
+                <div class="alert alert-warning text-center d-inline-block px-4 py-2 rounded-pill"
+                    style="
+                        color: #00eaffff;
+                        font-weight: 500;
+                        letter-spacing: 0.4px;
+                        font-size: 14px;
+                        background-color: #0008ffff;
+                        border: 1px solid #00eaffff;
+                        box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+                        animation: fadeOut 4s forwards;
+                        margin-left: 550px;
+                    ">
+                    {{ msg }}
+                </div>
+                {% endif %}
 						<form action="{% url 'signup' %}"
                             method="post"
                             enctype="multipart/form-data"
@@ -58,7 +89,9 @@
 
                             {% csrf_token %}
 
-                            <h3 class="text-center fw-bold mb-4">Create Your Account</h3>
+                            <h3 class="text-center fw-bold mb-4" style="
+                                font-weight: 700;
+                                letter-spacing: 1px;">Create Your Account</h3>
 
                             <div class="mb-3">
                                 <select class="form-select form-select-lg"
@@ -135,8 +168,23 @@
 
                             <div class="d-grid">
                                 <button type="submit"
-                                        class="btn btn-dark btn-lg rounded-pill">
-                                    Sign Up
+                                        class="btn btn-lg rounded-pill text-white"
+                                        style="
+                                            background: linear-gradient(135deg, #000000, #434343);
+                                            transition: all 0.3s ease;
+                                            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+                                            font-weight: 600;
+                                            letter-spacing: 0.5px;                                           
+                                        "
+                                        onmouseover="
+                                            this.style.transform='translateY(-3px)';
+                                            this.style.boxShadow='0 12px 28px rgba(0,0,0,0.45)';
+                                        "
+                                        onmouseout="
+                                            this.style.transform='translateY(0)';
+                                            this.style.boxShadow='0 6px 15px rgba(0,0,0,0.3)';
+                                        ">
+                                    ✨ SignUp
                                 </button>
                             </div>
 

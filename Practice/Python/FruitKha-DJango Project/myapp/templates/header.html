@@ -32,6 +32,9 @@
 	<!-- responsive -->
 	<link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
 
+	<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+
 </head>
 <body>
 
@@ -58,7 +61,7 @@
 						<!-- logo -->
 
 						<!-- menu start -->
-						<nav class="main-menu">
+						<nav class="main-menu" style="font-family: cursive; font-weight: 350; letter-spacing: 1px;">
 							<ul>
 								<li class="current-list-item"><a href="/">Home</a>
 								</li>
@@ -80,13 +83,25 @@
 								</li>
                                 <li><a href="#">Accounts</a>
 									<ul class="sub-menu">
-										<li><a href="#">Login</a></li>
+										{% if request.session.email %}
+										<li><a href="{% url 'logout' %}">LogOut ({{request.session.fname}})</a></li>
+										{% else %}
+										<li><a href="{% url 'login' %}">Login</a></li>
 										<li><a href="{% url 'signup' %}">SignUp</a></li>
+										{% endif %}
 										
-									</ul>
+									</ul>									
 								</li>
+								{% if request.session.profile_picture %}
+								<li class="nav-item">
+										<a class="nav-link" href="{% url 'profile' %}">
+										<img src="{{request.session.profile_picture}}" style="width: 50px; Height: 50px; border-radius: 50%;"/>
+										</a>
+								</li>
+								{% endif %}
 								<li>
 									<div class="header-icons">
+										<a class="profile-icon" href="{% url 'profile' %}"><i class="fas fa-user"></i></a>
 										<a class="shopping-cart" href="cart.html"><i class="fas fa-shopping-cart"></i></a>
 										<a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>
 									</div>
