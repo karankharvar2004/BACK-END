@@ -144,3 +144,23 @@ def forgot_password(request):
             return render(request,'forgot-password.html',{'msg':msg})
     else:
         return render(request,'forgot-password.html')
+    
+def verify_otp(request):
+    if 'otp' in request.session and str(request.session['otp']) == request.POST['otp']:
+        del request.session['otp']
+        return render(request, 'new-password.html')
+    else:
+        msg = "Invalid OTP"
+        return render(request, "otp.html", {'msg': msg})
+    
+def new_password(request):
+    if request.POST['new_password']==request.POST['cnew_password']:
+        user=User.objects.get(email=request.session['email1'])
+        user.password=request.POST['new_password']
+        user.save()
+        msg="password updated sucessfully"
+        del request.session['email1']
+        return render(request,'login.html',{'msg':msg})
+    else:
+        msg="New Password & confirm new password does not matched"
+        return render(request,'new-password.html',{'msg':msg})

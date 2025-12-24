@@ -12,6 +12,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('change-password/',views.change_password,name='change-password'),
     path('forgot-password/',views.forgot_password,name='forgot-password'),
-
+    path('verify-otp/',views.verify_otp,name='verify-otp'),
+    path('new-password/',views.new_password,name='new-password'),
     
 ]

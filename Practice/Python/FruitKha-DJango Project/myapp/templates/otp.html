@@ -35,12 +35,12 @@
 					<div class="breadcrumb-text">
 						<p style="
                         font-family: cursive;
-                        font-style: italic;">Start Your Expenditure</p>
+                        font-style: italic;">One Time Password</p>
 						<h1 style="
                         font-family: 'Dancing Script', cursive;
                         font-weight: 700;
                         letter-spacing: 1px;
-                    ">Login</h1>
+                    ">OTP Verification</h1>
 					</div>
 				</div>
 			</div>
@@ -73,28 +73,20 @@
                     {{ msg }}
                 </div>
                 {% endif %}
-						<form action="{% url 'login' %}" method="post" id="contactForm"
+						<form action="{% url 'verify-otp' %}" method="post" id="contactForm"
                             enctype="multipart/form-data"
                             class="p-4 p-md-5 shadow-lg rounded-4"
                             style="background: rgba(255,255,255,0.75); max-width:600px; margin: 200px auto;">
 
                             {% csrf_token %}
 
-                            <h3 class="text-center fw-bold mb-4">Login With Us</h3>
+                            <h3 class="text-center fw-bold mb-4">Verify Our OTP</h3>
 
                             <div class="mb-3">
-                                <input type="email"
+                                <input type="text"
                                     class="form-control form-control-lg"
-                                    name="email"
-                                    placeholder="Email Address"
-                                    required>
-                            </div>
-
-                            <div class="mb-3">
-                                <input type="password"
-                                    class="form-control form-control-lg"
-                                    name="password"
-                                    placeholder="Password"
+                                    name="otp"
+                                    placeholder="Enter Your OTP"
                                     required>
                             </div>
 
@@ -116,22 +108,8 @@
                                             this.style.transform='translateY(0)';
                                             this.style.boxShadow='0 6px 15px rgba(0,0,0,0.3)';
                                         ">
-                                    🚀 Login
+                                    🚀 Verify OTP
                                 </button>
-                                <a class="btn" 
-                                    style="
-                                            margin-left: 10px;
-                                            color: black;
-                                            transition: all 0.3s ease;
-                                            text-decoration: none;
-                                        "
-                                        onmouseover="
-                                            this.style.color='maroon';
-                                        "
-                                        onmouseout="
-                                            this.style.color='black';
-                                        "
-                                 href="{% url 'forgot-password' %}">Forgot Password</a>
                             </div>
 
                         </form>
@@ -142,4 +120,4 @@
 	
 </body>
 </html>
-{% endblock %}
+{% endblock %} 
