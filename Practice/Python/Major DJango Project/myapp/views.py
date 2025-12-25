@@ -252,7 +252,11 @@ def seller_product_details(request,pk):
 def product_details(request,pk):
     wishlist_flag=False
     cart_flag=False
-    user=User.objects.get(email=request.session['email'])
+    user=User()
+    try:
+        user=User.objects.get(email=request.session['email'])
+    except:
+        pass
     product=Product.objects.get(pk=pk)
     try:
         Wishlist.objects.get(user=user,product=product)
@@ -264,7 +268,8 @@ def product_details(request,pk):
         cart_flag=True
     except:
         pass
-    return render(request,'product-details.html',{'product':product,'wishlist_flag':wishlist_flag,'cart_flag':cart_flag})
+    return render(request, 'product-details.html',{'product':product,'wishlist_flag':wishlist_flag,'cart_flag':cart_flag})
+
 
 def seller_product_edit(request,pk):
     product=Product.objects.get(pk=pk)
