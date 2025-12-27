@@ -15,3 +15,23 @@ class User(models.Model):
     
     def __str__(self):
         return self.fname+" "+self.lname
+    
+class Product(models.Model):
+    category=(
+        ("berry","berry"),
+        ("tropical","tropical"),
+        ("citrus","citrus"),
+        ("seeded","seeded"),
+        ("coastal","coastal"),
+        ("special","special"),
+        ("superfood","superfood"),
+    )
+    seller=models.ForeignKey(User,on_delete=models.CASCADE)
+    product_category=models.CharField(max_length=100,choices=category)
+    product_name=models.CharField(max_length=100)
+    product_price=models.PositiveBigIntegerField()
+    product_desc=models.TextField()
+    product_image=models.ImageField(upload_to="product_image/, null=True, blank=True")
+    
+    def __str__(self):
+        return self.seller.fname+" - "+self.product_name

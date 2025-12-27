@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from .models import User
+from django.shortcuts import render, redirect
+from .models import User, Product
 from django.core.mail import send_mail
 from django.conf import settings
 import random
@@ -7,7 +7,14 @@ import random
 
 # Create your views here.
 def index(request):
-    return render(request,'index.html')
+    try:
+        user=User.objects.get(email=request.session['email'])
+        if user.usertype=="buyer":
+            return render(request,'index.html')
+        else:
+            return render(request,'seller-index.html')
+    except:
+        return render(request,'index.html')
 
 def about(request):
     return render(request,'about.html')
@@ -26,7 +33,10 @@ def login(request):
                request.session['email']=user.email
                request.session['fname']=user.fname
                request.session['profile_picture']=user.profile_picture.url
-               return render(request,'index.html')
+               if user.usertype=="buyer":
+                    return render(request,'index.html')
+               else:
+                    return render(request,'seller-index.html')
            else:
                msg="Incorrect Password"
                return render(request,'login.html',{'msg':msg})
@@ -87,9 +97,15 @@ def profile(request):
         user.save()
         request.session['profile_picture']=user.profile_picture.url
         msg="Profile Updated Successfully"
-        return render(request,'profile.html',{'user':user, 'msg':msg})
+        if user.usertype=="buyer":
+            return render(request,'profile.html',{'user':user, 'msg':msg})
+        else:
+            return render(request,'seller-profile.html',{'user':user, 'msg':msg})
     else:
-        return render(request,'profile.html',{'user':user})
+        if user.usertype=="buyer":
+            return render(request,'profile.html',{'user':user})
+        else:
+            return render(request,'seller-profile.html',{'user':user})
     
 def change_password(request):
     user=User.objects.get(email=request.session['email'])
@@ -164,3 +180,67 @@ def new_password(request):
     else:
         msg="New Password & confirm new password does not matched"
         return render(request,'new-password.html',{'msg':msg})
+    
+def add_product(request):
+    seller = User.objects.get(email=request.session['email'])
+
+    if request.method == "POST":
+        product_category = request.POST.get('product_category')
+        product_name = request.POST.get('product_name')
+        product_price = request.POST.get('product_price')
+        product_desc = request.POST.get('product_desc')
+        product_image = request.FILES.get('product_image')
+
+        if not product_category:
+            return render(request, 'add-product.html', {
+                'msg': 'Please select a product category'
+            })
+
+        Product.objects.create(
+            seller=seller,
+            product_category=product_category,
+            product_name=product_name,
+            product_price=product_price,
+            product_desc=product_desc,
+            product_image=product_image,
+        )
+
+        return render(request, 'add-product.html', {
+            'msg': 'Product Added Successfully'
+        })
+
+    return render(request, 'add-product.html')
+    
+def view_product(request):
+    seller=User.objects.get(email=request.session['email'])
+    products=Product.objects.filter(seller=seller)
+    return render(request,'view-product.html',{'products':products})
+
+def seller_product_details(request,pk):
+    product=Product.objects.get(pk=pk)
+    return render(request,'seller-product-details.html',{'product':product})
+
+def seller_product_edit(request,pk):
+    product=Product.objects.get(pk=pk)
+    if request.method=="POST":
+        product.product_category=request.POST['product_category']
+        product.product_name=request.POST['product_name']
+        product.product_price=request.POST['product_price']
+        product.product_desc=request.POST['product_desc']
+        try:
+            product.product_image=request.FILES['product_image']
+        except:
+            pass
+        product.save()
+        return redirect('view-product')
+    else:
+        return render(request,'seller-product-edit.html',{'product':product})
+    
+def seller_product_delete(request,pk):
+    product=Product.objects.get(pk=pk)
+    product.delete()
+    return redirect('view-product')
+
+def category(request):
+    products=Product.objects.all()
+    return render(request,'category.html',{'products':products})
