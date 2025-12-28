@@ -68,9 +68,6 @@ def login(request):
        except:
             msg="Email Not Registered"
             return render(request,'login.html',{'msg':msg})
-           
-
-        
     else:
         return render(request,'login.html')
 
@@ -129,7 +126,6 @@ def profile(request):
             return render(request,'profile.html',{'user':user, 'msg':msg})
         else:
             return render(request,'seller-profile.html',{'user':user, 'msg':msg})
-           
     else:
         if user.usertype=="buyer":
             return render(request,'profile.html',{'user':user})
@@ -167,7 +163,6 @@ def change_password(request):
                 return render(request,'change-password.html',{'msg':msg})
             else:
                 return render(request,'seller-change-password.html',{'msg':msg})                   
- 
     else:
         if user.usertype=="buyer":
             return render(request,'change-password.html')
@@ -195,7 +190,6 @@ def forgot_password(request):
                     context['result'] = f'Error sending email: {e}'
             else:
                 context['result'] = 'All fields are required'
-    
             return render(request, "otp.html", context)
         except Exception as e:
             print(e)
