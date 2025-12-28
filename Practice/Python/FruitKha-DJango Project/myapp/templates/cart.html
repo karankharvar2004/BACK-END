@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -105,10 +106,30 @@
 						</table>
 						<div class="cart-buttons">
 							<form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" id="net_price" name="amount" value="{{net_price}}">
-                            <button class="main_btn" type="button" id="checkout-button">Proceed Checkout</button>
-                        </form>
+								{% csrf_token %}
+								<input type="hidden" id="net_price" name="amount" value="{{net_price}}">
+
+								<button
+									type="button"
+									id="checkout-button"
+									style="
+										background-color:#f28123;
+										color:#fff;
+										border:none;
+										padding:14px 28px;
+										font-size:16px;
+										font-weight:600;
+										border-radius:6px;
+										cursor:pointer;
+										transition:all 0.3s ease;
+										width:100%;
+									"
+									onmouseover="this.style.backgroundColor='#b75b05ff'"
+									onmouseout="this.style.backgroundColor='#f28123'"
+								>
+									Proceed Checkout
+								</button>
+							</form>
 						</div>
 					</div>
 				</div>

@@ -12,6 +12,7 @@ import stripe
 
 
 stripe.api_key = settings.STRIPE_PRIVATE_KEY
+YOUR_DOMAIN = 'http://localhost:8000'
 
 
 # Create your views here.
@@ -505,19 +506,33 @@ def create_checkout_session(request):
 	return JsonResponse({'id': session.id})
 
 def success(request):
-    user=User.objects.get(email=request.session['email'])
-    carts=Cart.objects.filter(user=user,payment_status=False)
-    for i in carts:
-        i.payment_status=True
-        i.save()
-        carts=Cart.objects.filter(user=user,payment_status=False)
-        request.session['cart_count']=len(carts)
-        return render(request,'success.html')
+    email = request.session.get('email')
+    if not email:
+        return redirect('login')
+
+    user = User.objects.get(email=email)
+
+    # Mark all cart items as paid
+    Cart.objects.filter(
+        user=user,
+        payment_status=False
+    ).update(payment_status=True)
+
+    # Reset cart count
+    request.session['cart_count'] = 0
+
+    return redirect('myorder')
+
 
 def cancel(request):
 	return render(request,'cancel.html')
 
 def myorder(request):
-    user=User.objects.get(email=request.session['email'])
-    carts=Cart.objects.filter(user=user,payment_status=True)
-    return render(request,'myorder.html',{'carts':carts})
+    email = request.session.get('email')
+    if not email:
+        return redirect('login')
+
+    user = User.objects.get(email=email)
+    carts = Cart.objects.filter(user=user, payment_status=True)
+
+    return render(request, 'myorder.html', {'carts': carts})
