@@ -4,11 +4,7 @@ num = int(input("Enter the Digits: "))
 
 count = 0
 
-for i in num:
+while num > 0:
+    num = num // 10
     count += 1
 print(count)
-
-# while num > 0:
-#     num = num // 10
-#     count += 1
-# print(count)
