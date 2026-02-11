@@ -2,10 +2,16 @@
 
 num =  int(input("Enter your Final Digit: "))
 
-# for i in range(1, num+1):
-#     print(i)
+# Using FOR Loop
 
-i = 1
-while i <= num:
+for i in range(1, num+1):
     print(i)
-    i = i + 1
+
+
+
+# using WHILE Loop
+
+# i = 1
+# while i <= num:
+#     print(i)
+#     i = i + 1

@@ -4,16 +4,16 @@ num = int(input("Enter Your Number: "))
 
 sum = 0
 
-# for i in range(num,0,-1):
-#     if i % 2 != 0:
-#         sum += i
+for i in range(num,0,-1):
+    if i % 2 != 0:
+        sum += i
 
-# print(sum)
-
-i = num
-while i>=0:
-    if i % 2 !=0:
-        sum +=i
-    i -= 1
 print(sum)
+
+# i = num
+# while i>=0:
+#     if i % 2 !=0:
+#         sum +=i
+#     i -= 1
+# print(sum)
 

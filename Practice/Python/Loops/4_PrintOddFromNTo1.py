@@ -1,4 +1,4 @@
-# Print odd numbers between 1 to N
+# Print odd numbers between N to 1
 
 num = int(input("Enter Your Number: "))
 
