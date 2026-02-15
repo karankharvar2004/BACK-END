@@ -7,4 +7,4 @@ for i in range(len(arr) - 1):
         print("Not Sorted")
         break
 else:
-    print("Sorted")
+    print("Sorted") 
