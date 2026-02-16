@@ -1,4 +1,5 @@
-# Binary search
+# Binary search: It is an efficient search algorithm that works on sorted lists. 
+# It repeatedly divides the search interval in half until the target element is found or the search interval is empty.
 
 arr = [10, 20, 30, 40, 50, 60, 70]
 target = 40
