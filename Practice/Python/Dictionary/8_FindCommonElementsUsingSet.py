@@ -8,7 +8,7 @@ common = list(set(arr1) & set(arr2))
 print(common)
 
 
-# set2 = set(arr2)
+# set2 = set(arr2) 
 
 # common = []
 
