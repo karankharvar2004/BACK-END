@@ -12,7 +12,7 @@ pun = ",?!."
 for sentence in arr:
     sentence = sentence.lower()
     for p in pun:
-        sentence = sentence.replace(p, "")
+        sentence = sentence.replace(p, "")  
     words = sentence.split()
     
     for word in words:
