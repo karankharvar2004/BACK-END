@@ -4,7 +4,7 @@ class Laptop:
     def __init__(self, brand, processor, storage):
         self.brand = brand
         self.processor = processor
-        self.storage = storage
+        self.storage = storage 
 
     def display_info(self):
         print("Laptop Name:",self.brand)

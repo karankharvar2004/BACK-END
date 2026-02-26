@@ -1,7 +1,7 @@
 # Create a Student class with name and marks.
 
 class Student:
-    def __init__(self, name, marks):
+    def __init__(self, name, marks): 
         self.name = name
         self.marks = marks
 
